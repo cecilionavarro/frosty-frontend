@@ -32,12 +32,12 @@ export function HeroSection() {
         message: value
       })
 
-      // Get all messages from backend
+      // Get response from backend
       const response = await axios.get('http://localhost:8000/api/messages')
-      const messagesText = response.data.messages.join('\n')
+      const backendReply = response.data?.reply ?? 'No response'
 
       setIsWorking(false)
-      setEntries((prev) => [...prev, createEntry("response", messagesText)])
+      setEntries((prev) => [...prev, createEntry("response", backendReply)])
     } catch (error) {
       setIsWorking(false)
       setEntries((prev) => [...prev, createEntry("response", "Error connecting to backend: " + error)])

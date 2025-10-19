@@ -23,13 +23,18 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             message_data = json.loads(post_data.decode('utf-8'))
 
+            incoming_message = message_data.get('message', '')
+
             # Save message to text file
             with open('messages.txt', 'a') as f:
                 timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                f.write(f"[{timestamp}] {message_data.get('message', '')}\n")
+                f.write(f"[{timestamp}] {incoming_message}\n")
 
             self._set_headers(201)
-            response = {'status': 'success', 'message': 'Message saved'}
+            response = {
+                'status': 'success',
+                'message': 'Message saved',
+            }
             self.wfile.write(json.dumps(response).encode())
         else:
             self._set_headers(404)
@@ -43,8 +48,14 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 with open('messages.txt', 'r') as f:
                     messages = f.readlines()
 
+            # The variable we want to send to frontend
+            my_variable = callback()
+
             self._set_headers()
-            response = {'messages': [msg.strip() for msg in messages]}
+            response = {
+                'messages': [msg.strip() for msg in messages],
+                'reply': my_variable,  # ✅ send your variable
+            }
             self.wfile.write(json.dumps(response).encode())
         else:
             self._set_headers(404)
@@ -55,6 +66,11 @@ def run(port=8000):
     httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
     print(f'Starting server on port {port}...')
     httpd.serve_forever()
+
+
+def callback():
+    var='INSIDE'
+    return var
 
 if __name__ == '__main__':
     run()
