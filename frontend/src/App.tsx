@@ -1,10 +1,13 @@
-import { ThemeProvider } from "./components/theme-provider"
-import { LandingPage } from "./components/landing-page"
 
-export default function App() {
+import PromptInput from "./components/PromptInput"
+
+function App() {
+
   return (
-    <ThemeProvider defaultTheme="dark">
-      <LandingPage />
-    </ThemeProvider>
+    <div className="flex justify-center items-center h-svh px-5 md:px-10">
+      <PromptInput/>
+    </div>
   )
 }
+
+export default App
