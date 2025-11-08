@@ -2,23 +2,45 @@ import { ArrowUpIcon } from "lucide-react"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./ui/input-group"
 import { useState } from "react"
 
+import axios from 'axios'
+
 
 const PromptInput = () => {
     const [input, setInput] = useState("")
+    const [response, setResponse] = useState("")
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         console.log(value)
         setInput(value)
     }
+    const handleSend = async () => {
+        console.log('sent!!')
+        if (!input.trim()) return
+        try {
+            const res = await axios.post('http://127.0.0.1:8000/echo', { input });
+            setResponse(res.data.reply);
+            console.log("Server reply: ", res.data.reply)
+            setInput("")
+        } catch (error) {
+            console.error(error)
+        }
+    }
     return (
         <InputGroup>
-            <InputGroupInput placeholder="Ask Frosty" onChange={handleChange} value={input} />
+            <InputGroupInput
+                placeholder="Ask Frosty"
+                onChange={handleChange}
+                value={input}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            />
             <InputGroupAddon align="inline-end">
                 <InputGroupButton
                     variant='default'
                     className="rounded-full"
                     size='icon-xs'
-                    disabled={!input.trim()}>
+                    disabled={!input.trim()}
+                    onClick={handleSend}>
                     <ArrowUpIcon />
                     <span className="sr-only">Send</span>
                 </InputGroupButton>
