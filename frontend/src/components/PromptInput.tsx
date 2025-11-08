@@ -6,22 +6,22 @@ import axios from 'axios'
 
 
 const PromptInput = () => {
-    const [input, setInput] = useState("")
+    const [message, setMessage] = useState("")
     const [response, setResponse] = useState("")
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         console.log(value)
-        setInput(value)
+        setMessage(value)
     }
     const handleSend = async () => {
         console.log('sent!!')
-        if (!input.trim()) return
+        if (!message.trim()) return
         try {
-            const res = await axios.post('http://127.0.0.1:8000/echo', { input });
+            const res = await axios.post('http://127.0.0.1:8000/echo', { message });
             setResponse(res.data.reply);
             console.log("Server reply: ", res.data.reply)
-            setInput("")
+            setMessage("")
         } catch (error) {
             console.error(error)
         }
@@ -31,7 +31,7 @@ const PromptInput = () => {
             <InputGroupInput
                 placeholder="Ask Frosty"
                 onChange={handleChange}
-                value={input}
+                value={message}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
             <InputGroupAddon align="inline-end">
@@ -39,7 +39,7 @@ const PromptInput = () => {
                     variant='default'
                     className="rounded-full"
                     size='icon-xs'
-                    disabled={!input.trim()}
+                    disabled={!message.trim()}
                     onClick={handleSend}>
                     <ArrowUpIcon />
                     <span className="sr-only">Send</span>
