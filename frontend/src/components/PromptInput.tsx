@@ -1,52 +1,74 @@
-import { ArrowUpIcon } from "lucide-react"
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./ui/input-group"
-import { useState } from "react"
+import { ArrowUpIcon, Plus } from "lucide-react"
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea } from "./ui/input-group"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { Separator } from "./ui/separator"
+import { forwardRef } from "react"
 
-import axios from 'axios'
+type PromptInputProps = {
+    message: string
+    onMessageChange: (value: string) => void
+    onSend: () => void
+    disabled?: boolean
+}
 
 
-const PromptInput = () => {
-    const [message, setMessage] = useState("")
-    const [response, setResponse] = useState("")
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(({ message, onMessageChange, onSend, disabled }, ref) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value
         console.log(value)
-        setMessage(value)
+        onMessageChange(value)
     }
-    const handleSend = async () => {
-        console.log('sent!!')
-        if (!message.trim()) return
-        try {
-            const res = await axios.post('http://127.0.0.1:8000/echo', { message });
-            setResponse(res.data.reply);
-            console.log("Server reply: ", res.data.reply)
-            setMessage("")
-        } catch (error) {
-            console.error(error)
-        }
-    }
+
     return (
-        <InputGroup >
-            <InputGroupInput
+        <InputGroup>
+            <InputGroupTextarea
+                ref={ref}
                 placeholder="Ask Frosty"
                 onChange={handleChange}
                 value={message}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault()
+                        onSend()
+                    }
+                }}
             />
-            <InputGroupAddon align="inline-end">
+            <InputGroupAddon align="block-end">
+                <InputGroupButton
+                    variant="outline"
+                    className="rounded-full"
+                    size="icon-xs"
+                >
+                    <Plus />
+                </InputGroupButton>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <InputGroupButton variant="ghost">Auto</InputGroupButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                        side="top"
+                        align="start"
+                        className="[--radius:0.95rem]"
+                    >
+                        <DropdownMenuItem>Auto</DropdownMenuItem>
+                        <DropdownMenuItem>Agent</DropdownMenuItem>
+                        <DropdownMenuItem>Manual</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <InputGroupText className="ml-auto">52% used</InputGroupText>
+                <Separator orientation="vertical" className="!h-4" />
                 <InputGroupButton
                     variant='default'
                     className="rounded-full"
                     size='icon-xs'
-                    disabled={!message.trim()}
-                    onClick={handleSend}>
+                    disabled={disabled}
+                    onClick={onSend}>
                     <ArrowUpIcon />
                     <span className="sr-only">Send</span>
                 </InputGroupButton>
             </InputGroupAddon>
         </InputGroup>
     )
-}
+})
 
 export default PromptInput
