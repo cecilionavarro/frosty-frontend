@@ -48,7 +48,7 @@ const NavUser = ({ user: { name, email, avatar } }: NavUserProps) => {
                 <span>Settings</span>
               </DropdownMenuItem>
 
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                 <ReceiptText />
                 <span>Billing</span>
               </DropdownMenuItem>

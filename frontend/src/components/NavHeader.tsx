@@ -8,7 +8,7 @@ const NavHeader = () => {
       <SidebarMenuItem>
         <SidebarMenuButton >
           <Brain/>
-          <a href="#" className='text-base font-semibold'>Gyrus Inc</a>
+          <a href="#" className='text-base font-semibold'>Gyrus Inc.</a>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

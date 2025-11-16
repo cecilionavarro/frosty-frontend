@@ -27,7 +27,7 @@ const PromptInput = () => {
         }
     }
     return (
-        <InputGroup>
+        <InputGroup >
             <InputGroupInput
                 placeholder="Ask Frosty"
                 onChange={handleChange}
