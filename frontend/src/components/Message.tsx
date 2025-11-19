@@ -1,4 +1,8 @@
 import { cn } from "@/lib/utils"
+import { Button } from "./ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { Check, Copy, Flag, ThumbsDown, ThumbsUp } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 type MessageProps = {
   content: string
@@ -7,17 +11,89 @@ type MessageProps = {
 
 const Message = ({ content, role }: MessageProps) => {
   const isUser = role === "user"
+  const [copyClicked, setCopyClicked] = useState(false)
+  const timeoutRef = useRef<number | null>(null)
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(content)
+    setCopyClicked(true)
+
+    // clear any previous timer so they don't stack
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = window.setTimeout(() => {
+      setCopyClicked(false)
+    }, 5000)
+  }
+
+  // optional: cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className={cn("flex w-full py-8",
         isUser ? "justify-end" : "justify-start"
       )}>
-        <div className={cn("whitespace-pre-wrap",
-          isUser ? "bg-blue-500 p-2 rounded-xl max-w-[75%]" : ""
-        )}>
-          {role}
-          {content}
+        <div className="flex flex-col max-w-[75%] gap-2">
+          <div className={cn("whitespace-pre-wrap inline-flex",
+            isUser ? "bg-blue-500 p-2 rounded-xl self-end" : "self-start"
+          )}>
+            {content}
+          </div>
+          <span className={cn(isUser ? "self-end" : "self-start")}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="ghost" size="icon-sm" onClick={handleCopy}>
+                  {copyClicked ? <Check /> : <Copy />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                Copy
+              </TooltipContent>
+            </Tooltip>
+            {!isUser &&
+              <>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" size="icon-sm" onClick={handleCopy}>
+                      <ThumbsUp />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Good response
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" size="icon-sm" onClick={handleCopy}>
+                      <ThumbsDown />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Bad response
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost" size="icon-sm" onClick={handleCopy}>
+                      <Flag />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Report message
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            }
+          </span>
         </div>
       </div>
     </div>
@@ -25,40 +101,3 @@ const Message = ({ content, role }: MessageProps) => {
 }
 
 export default Message
-
-// const Message = ({ content, role }: MessageProps) => {
-//   return (
-//     <div className="max-w-4xl mx-auto px-4 py-3">
-//       <div
-//         className={cn(
-//           "rounded-lg p-3 text-sm",
-//           role === "user"
-//             ? "bg-primary text-primary-foreground ml-auto max-w-[80%]"
-//             : "bg-muted max-w-full"
-//         )}
-//       >
-//         {content}
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Message
-
-
-// const Message = ({ content, role }: MessageProps) => {
-//   return (
-//     <div
-//       className={cn(
-//         "w-full px-4 py-6",
-//         role === "assistant" && "bg-muted/50"
-//       )}
-//     >
-//       <div className="max-w-4xl mx-auto">
-//         <div className="text-sm whitespace-pre-wrap">
-//           {content}
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
