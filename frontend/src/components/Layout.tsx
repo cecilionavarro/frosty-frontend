@@ -25,7 +25,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <Snowflake className="h-4 w-4" />
             Frosty
           </div>
           <div className="fixed top-0 right-0 p-4">

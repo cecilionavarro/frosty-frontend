@@ -55,8 +55,7 @@ const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(({ message
                         <DropdownMenuItem>Manual</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <InputGroupText className="ml-auto">52% used</InputGroupText>
-                <Separator orientation="vertical" className="!h-4" />
+                <InputGroupText className="ml-auto"></InputGroupText>
                 <InputGroupButton
                     variant='default'
                     className="rounded-full"
