@@ -23,7 +23,7 @@ class EchoHandler(BaseHTTPRequestHandler):
         data = json.loads(raw.decode("utf-8")) if raw else {}
         message = (data.get("message") or "").strip()
 
-        reply = json.dumps({"reply": f"You said: {message}"}).encode("utf-8")
+        reply = json.dumps({"reply": message}).encode("utf-8")
         self.send_response(200)
         self._cors()
         self.send_header("Content-Type", "application/json; charset=utf-8")
