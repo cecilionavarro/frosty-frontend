@@ -1,19 +1,10 @@
-import { MoreHorizontal, Trash2 } from "lucide-react"
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import NavUser from "./NavUser";
 import NavChat from "./NavChat";
 import NavHeader from "./NavHeader";

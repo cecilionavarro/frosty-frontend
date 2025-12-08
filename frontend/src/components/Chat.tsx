@@ -4,6 +4,7 @@ import axios from "axios"
 import { useSidebar } from "./ui/sidebar"
 import PromptInput from "./PromptInput"
 import Message from "./Message"
+import EmailDialog from "./EmailDialog"
 
 type MessageType = {
   role: "user" | "assistant"
@@ -101,6 +102,8 @@ const Chat = () => {
           />
         </div>
       </div>
+      
+      <EmailDialog/>
     </>
   )
 }
