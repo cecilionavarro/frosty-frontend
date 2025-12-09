@@ -149,7 +149,7 @@ export function AppSidebar() {
         <NavChat items={data.navChat}/>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser/>
       </SidebarFooter>
     </Sidebar>
   )

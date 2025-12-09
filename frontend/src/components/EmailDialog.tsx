@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,15 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import axios from "axios";
+import { USER } from "@/hooks/useUser";
+import { createUser } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EmailDialog = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !localStorage.getItem("user_id");
+  });
   // fields state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,6 +27,11 @@ const EmailDialog = () => {
     name: "",
     email: "",
   });
+
+  const firstRef = useRef<HTMLInputElement>(null);
+  const secondRef = useRef<HTMLInputElement>(null);
+
+  const qc = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     // prevents default behavior like reloading the page
@@ -42,15 +52,18 @@ const EmailDialog = () => {
 
     const payload = {
       name,
-      email
-    }
+      email,
+    };
 
     try {
-      const res = await axios.post("http://localhost:4004/user", payload)
-      console.log("User created ", res)
+      const createdUser = await createUser(payload);
+      qc.setQueryData([USER], createdUser);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user_id", createdUser.id);
+      }
     } catch (error) {
-      console.error(error)
-      return
+      console.error("Error creating user", error);
+      return;
     }
 
     console.log("Form Submitted!");
@@ -76,6 +89,13 @@ const EmailDialog = () => {
             <div className="grid gap-3">
               <Label htmlFor="name">Name</Label>
               <Input
+                ref={firstRef}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    secondRef.current?.focus();
+                  }
+                }}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Smith"
@@ -85,6 +105,7 @@ const EmailDialog = () => {
             <div className="grid gap-3">
               <Label htmlFor="email-1">Email</Label>
               <Input
+                ref={secondRef}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="johnsmith@example.com"

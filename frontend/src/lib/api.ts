@@ -1,3 +1,17 @@
 import API from "@/config/apiClient";
 
-export const getUser = () => API.get("/user")
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type CreateUserPayload = Omit<User, "id">;
+
+export const getUser = (userId: string) =>
+  API.get<User>("/user", { params: { user_id: userId } }).then(
+    (res) => res.data
+  );
+
+export const createUser = (payload: CreateUserPayload) =>
+  API.post<User>("/user", payload).then((res) => res.data);
