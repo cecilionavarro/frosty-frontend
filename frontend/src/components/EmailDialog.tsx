@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,13 @@ const EmailDialog = () => {
 
   const qc = useQueryClient();
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("user_id")) {
+      setOpen(false);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     // prevents default behavior like reloading the page
     e.preventDefault();
@@ -58,9 +65,7 @@ const EmailDialog = () => {
     try {
       const createdUser = await createUser(payload);
       qc.setQueryData([USER], createdUser);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("user_id", createdUser.id);
-      }
+      localStorage.setItem("user_id", createdUser.id);
     } catch (error) {
       console.error("Error creating user", error);
       return;
@@ -69,6 +74,9 @@ const EmailDialog = () => {
     console.log("Form Submitted!");
     setOpen(false);
   };
+
+  // const exists = localStorage.getItem("user_id") !== null;
+  // setOpen(!exists)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
